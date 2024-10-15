@@ -17,5 +17,5 @@ export const connectDB = async () => {
 // Escucha el evento 'connected' en la conexión de Mongoose
 mongoose.connection.on("connected", () => {
   // Cuando se establece la conexión, imprime un mensaje en la consola con el nombre de la base de datos
-  console.log("Mongodb is connected to ", mongoose.connection.db.databaseName);
+  console.log("Mongodb is connected to", mongoose.connection.db.databaseName);
 });
