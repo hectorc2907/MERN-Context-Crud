@@ -66,9 +66,36 @@ export const getPost = async (req, res) => {
 };
 
 // Actualizar un post existente
-export const updatePost = (req, res) => {
-  // Aún no implementado: debería actualizar un post específico con los datos proporcionados
-  res.send("updating a post");
+export const updatePost = async (req, res) => {
+  // Intenta ejecutar el bloque de código para actualizar un post
+  try {
+    // Desestructura el ID del post desde los parámetros de la solicitud
+    const { id } = req.params;
+
+    // Busca y actualiza el post en la base de datos utilizando el ID proporcionado
+    const updatedPost = await Posts.findByIdAndUpdate(
+      id,
+      {
+        $set: req.body, // Establece los nuevos datos del cuerpo de la solicitud
+      },
+      { new: true } // Devuelve el documento actualizado
+    );
+
+    // Si no se encuentra el post, responde con un estado 404 (No Encontrado)
+    if (!updatedPost) {
+      return res
+        .status(404)
+        .json({ success: false, message: "Post not found" });
+    }
+
+    // Responde con un estado 200 (OK) y un mensaje de éxito junto con el post actualizado
+    return res
+      .status(200)
+      .json({ success: true, message: "Post Updated", updatedPost });
+  } catch (error) {
+    // Si ocurre un error, responde con un estado 500 (Error Interno del Servidor) y el mensaje de error
+    return res.status(500).json({ success: false, message: error.message });
+  }
 };
 
 // Eliminar un post
