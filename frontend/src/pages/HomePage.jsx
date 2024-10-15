@@ -19,7 +19,7 @@ const HomePage = () => {
     return (
       <div className="grid md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
         {posts.map((post) => (
-          <PostCard key={post._id} posts={post} />
+          <PostCard key={post._id} post={post} />
         ))}
       </div>
     );
