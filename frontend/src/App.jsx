@@ -30,7 +30,8 @@ const App = () => {
             {/* Ruta dinámica para editar un post según su ID, usando el mismo componente PostForm */}
             <Route path="/:id" element={<PostForm />} />
 
-            {/* Ruta que captura cualquier ruta no definida, mostrando NotFoundPage */}
+            {/* Ruta que captura cualquier ruta no definida o id de post no registrado, mostrando NotFoundPage */}
+            <Route path="/error" element={<NotFoundPage />} />
             <Route path="*" element={<NotFoundPage />} />
           </Routes>
         </PostsProvider>

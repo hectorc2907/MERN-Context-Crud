@@ -25,6 +25,11 @@ const PostForm = () => {
       if (params.id) {
         // Verifica si se está editando un post
         const post = await getPost(params.id); // Obtiene el post por ID
+        if (!post) {
+          // Si no existe el post, redirigir a la página de NotFound
+          navigate("/error");
+          return;
+        }
         setPost({
           title: post.title, // Actualiza los valores en el estado
           description: post.description,
