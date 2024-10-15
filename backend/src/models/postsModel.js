@@ -2,7 +2,7 @@
 import mongoose from "mongoose";
 
 // Define un esquema para los documentos de la colección "post"
-const postSchema = new mongoose.Schema(
+const postsSchema = new mongoose.Schema(
   {
     // Campo 'title' que es obligatorio y debe ser una cadena de texto
     title: {
@@ -30,4 +30,4 @@ const postSchema = new mongoose.Schema(
 );
 
 // Exporta el modelo 'post' basado en el esquema definido, permitiendo su uso en otras partes de la aplicación
-export default mongoose.model("post", postSchema);
+export default mongoose.model("posts", postsSchema);
