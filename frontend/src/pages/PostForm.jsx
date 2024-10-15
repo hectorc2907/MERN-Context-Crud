@@ -1,8 +1,8 @@
 import { Formik, Form, Field, ErrorMessage } from "formik";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useNavigate, useParams } from "react-router-dom";
 import * as Yup from "yup";
 import { usePosts } from "../context/postsContext";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { AiOutlineLoading3Quarters } from "react-icons/ai";
 
 const PostForm = () => {
@@ -10,8 +10,21 @@ const PostForm = () => {
     title: "",
     description: "",
   });
-  const { createPost } = usePosts();
+  const { createPost, getPost, updatePost } = usePosts();
   const navigate = useNavigate();
+  const params = useParams();
+
+  useEffect(() => {
+    (async () => {
+      if (params.id) {
+        const post = await getPost(params.id);
+        setPost({
+          title: post.title,
+          description: post.description,
+        });
+      }
+    })();
+  }, [params.id, getPost]);
 
   return (
     <div className="flex items-center justify-center">
@@ -30,7 +43,11 @@ const PostForm = () => {
             description: Yup.string().required("Description is Required"),
           })}
           onSubmit={async (values, actions) => {
-            await createPost(values);
+            if (params.id) {
+              await updatePost(params.id, values);
+            } else {
+              await createPost(values);
+            }
             actions.resetForm();
             actions.setSubmitting(false);
             navigate("/");

@@ -4,7 +4,9 @@ import { createContext, useContext, useEffect, useState } from "react";
 import {
   createPostRequest,
   deletePostRequest,
+  getPostRequest,
   getPostsRequest,
+  updatePostRequest,
 } from "../api/posts";
 
 // Crea un contexto para gestionar el estado de los posts en la aplicación
@@ -66,6 +68,23 @@ export const PostsProvider = ({ children }) => {
     }
   };
 
+  const getPost = async (id) => {
+    try {
+      const response = await getPostRequest(id);
+      return response.data.post;
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
+  const updatePost = async (id, post) => {
+    try {
+      const response = await updatePostRequest(id, post);
+      setPosts(posts.map((post) => (post._id === id ? response.data.updatedPost : post)));
+    } catch (error) {
+      console.error(error);
+    }
+  };
   // Opcional: Renderiza un mensaje de error o de carga si es necesario
   if (loading) return <div>Loading...</div>; // Puedes personalizar el mensaje de carga
   if (error) return <div>Error: {error}</div>; // Muestra el mensaje de error si existe
@@ -73,7 +92,9 @@ export const PostsProvider = ({ children }) => {
   return (
     // Provee el estado 'posts' y la función 'deletePost' a través del contexto
     // para que los componentes hijos puedan acceder a él
-    <postsContext.Provider value={{ posts, deletePost, createPost }}>
+    <postsContext.Provider
+      value={{ posts, deletePost, createPost, getPost, updatePost }}
+    >
       {children}
     </postsContext.Provider>
   );
