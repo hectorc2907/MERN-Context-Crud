@@ -88,6 +88,34 @@ export const updatePost = async (req, res) => {
     // Extrae el ID del post desde los parámetros de la solicitud
     const { id } = req.params;
 
+    // Busca el post en la base de datos utilizando el ID proporcionado
+    const post = await Posts.findById(id);
+
+    // Si no se encuentra el post, responde con un estado 404 (No Encontrado)
+    if (!post) {
+      return res
+        .status(404)
+        .json({ success: false, message: "Post not found" });
+    }
+
+    // Verifica si se ha enviado una nueva imagen en la solicitud
+    if (req.files?.image) {
+      // Si el post tiene una imagen anterior, la eliminamos de Cloudinary
+      if (post.image?.public_id) {
+        await deleteImage(post.image.public_id);
+      }
+
+      // Sube la nueva imagen a Cloudinary y guarda su información
+      const result = await uploadImage(req.files.image.tempFilePath);
+      // Elimina la imagen temporal del sistema de archivos local
+      await fs.remove(req.files.image.tempFilePath);
+      // Actualiza el cuerpo de la solicitud con la nueva imagen
+      req.body.image = {
+        url: result.secure_url,
+        public_id: result.public_id,
+      };
+    }
+
     // Busca y actualiza el post con los nuevos datos proporcionados en el cuerpo de la solicitud
     const updatedPost = await Posts.findByIdAndUpdate(
       id,
