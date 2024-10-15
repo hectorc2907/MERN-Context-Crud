@@ -1,7 +1,7 @@
 // Importa las funciones necesarias desde React
 import { createContext, useContext, useEffect, useState } from "react";
 // Importamos las peticiones
-import { getPostsRequest } from "../api/posts";
+import { deletePostRequest, getPostsRequest } from "../api/posts";
 
 // Crea un contexto para gestionar el estado de los posts en la aplicación
 const postsContext = createContext();
@@ -32,7 +32,7 @@ export const PostsProvider = ({ children }) => {
     const fetchPosts = async () => {
       try {
         const response = await getPostsRequest(); // Llama a la función para obtener los posts
-        setPosts(response.data); // Actualiza el estado 'posts' con los datos obtenidos
+        setPosts(response.data.posts); // Actualiza el estado 'posts' con los datos obtenidos
       } catch (err) {
         setError(err.message); // Maneja el error y actualiza el estado de error
       } finally {
@@ -42,6 +42,13 @@ export const PostsProvider = ({ children }) => {
 
     fetchPosts(); // Llama a la función para obtener los posts
   }, []); // Dependencias vacías indican que solo se ejecuta al montar el componente
+  
+  const deletePost = async (id) => {
+    const response = await deletePostRequest(id);
+    if (response.status === 200) {
+      setPosts(posts.filter((post) => post._id !== id));
+    }
+  };
 
   // Opcional: Renderiza un mensaje de error o de carga si es necesario
   if (loading) return <div>Loading...</div>; // Puedes personalizar el mensaje de carga
@@ -49,6 +56,8 @@ export const PostsProvider = ({ children }) => {
 
   return (
     // Provee el estado 'posts' a través del contexto para que los componentes hijos puedan acceder a él
-    <postsContext.Provider value={posts}>{children}</postsContext.Provider>
+    <postsContext.Provider value={{posts, deletePost}}>
+      {children}
+    </postsContext.Provider>
   );
 };
