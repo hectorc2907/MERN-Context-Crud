@@ -41,9 +41,28 @@ export const createPost = async (req, res) => {
 };
 
 // Obtener un post específico por su ID
-export const getPost = (req, res) => {
-  // Aún no implementado: debería recuperar y devolver un post basado en su ID
-  res.send("getting a post");
+export const getPost = async (req, res) => {
+  // Intenta ejecutar el bloque de código para recuperar un post
+  try {
+    // Desestructura el ID del post desde los parámetros de la solicitud
+    const { id } = req.params;
+
+    // Busca el post en la base de datos utilizando el ID proporcionado
+    const post = await Posts.findById(id);
+
+    // Si el post no se encuentra, responde con un estado 404 (No Encontrado)
+    if (!post) {
+      return res
+        .status(404)
+        .json({ success: false, message: "Post not found" });
+    }
+
+    // Si el post se encuentra, responde con un estado 200 (OK) y el post en el cuerpo de la respuesta
+    return res.status(200).json({ success: true, post });
+  } catch (error) {
+    // Si ocurre un error, responde con un estado 500 (Error Interno del Servidor) y el mensaje de error
+    return res.status(500).json({ success: false, message: error.message });
+  }
 };
 
 // Actualizar un post existente
