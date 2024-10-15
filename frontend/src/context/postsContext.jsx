@@ -1,5 +1,7 @@
 // Importa las funciones necesarias desde React
 import { createContext, useContext, useEffect, useState } from "react";
+// Importamos las peticiones
+import { getPostsRequest } from "../api/posts";
 
 // Crea un contexto para gestionar el estado de los posts en la aplicación
 const postsContext = createContext();
@@ -22,6 +24,28 @@ export const usePosts = () => {
 export const PostsProvider = ({ children }) => {
   // Declara el estado 'posts' y la función para actualizarlo
   const [posts, setPosts] = useState([]);
+  const [error, setError] = useState(null); // Estado para manejar errores
+  const [loading, setLoading] = useState(true); // Estado para manejar la carga
+
+  // Efecto secundario que se ejecuta una vez al montar el componente
+  useEffect(() => {
+    const fetchPosts = async () => {
+      try {
+        const response = await getPostsRequest(); // Llama a la función para obtener los posts
+        setPosts(response.data); // Actualiza el estado 'posts' con los datos obtenidos
+      } catch (err) {
+        setError(err.message); // Maneja el error y actualiza el estado de error
+      } finally {
+        setLoading(false); // Cambia el estado de carga a falso, ya sea que la solicitud haya sido exitosa o no
+      }
+    };
+
+    fetchPosts(); // Llama a la función para obtener los posts
+  }, []); // Dependencias vacías indican que solo se ejecuta al montar el componente
+
+  // Opcional: Renderiza un mensaje de error o de carga si es necesario
+  if (loading) return <div>Loading...</div>; // Puedes personalizar el mensaje de carga
+  if (error) return <div>Error: {error}</div>; // Muestra el mensaje de error si existe
 
   return (
     // Provee el estado 'posts' a través del contexto para que los componentes hijos puedan acceder a él

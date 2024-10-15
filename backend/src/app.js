@@ -1,6 +1,9 @@
 // Importa el módulo express para crear aplicaciones web
 import express from "express";
 
+// Importa cors para el manejo de politicas
+import cors from "cors";
+
 // Importa el middleware express-fileupload para manejar la carga de archivos en las solicitudes
 import fileUpload from "express-fileupload";
 
@@ -20,6 +23,14 @@ app.use(express.json());
 
 // Middleware para parsear datos en formato URL-encoded (por ejemplo, formularios HTML)
 app.use(express.urlencoded({ extended: false }));
+
+// Configuramos CORS para permitir solicitudes desde el frontend definido en las variables de entorno.
+app.use(
+  cors({
+    credentials: true, // Permite el envío de cookies a través de peticiones CORS.
+    origin: process.env.FRONTEND_URL, // Define qué origen está permitido.
+  })
+);
 
 // Configura el middleware express-fileupload para manejar archivos temporales
 app.use(
