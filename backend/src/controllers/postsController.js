@@ -77,8 +77,9 @@ export const getPost = async (req, res) => {
     // Si el post existe, lo devuelve con un estado 200 (OK)
     return res.status(200).json({ success: true, post });
   } catch (error) {
-    // Devuelve un estado 500 en caso de error
-    return res.status(500).json({ success: false, message: error.message });
+    // Devuelve un estado 500 en caso de error se comenta para evitar mensajes de error en produccion
+    // return res.status(500).json({ success: false, message: error.message });
+    return res.json({ success: false });
   }
 };
 
