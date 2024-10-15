@@ -1,6 +1,9 @@
 // Importa el módulo express para crear aplicaciones web
 import express from "express";
 
+// Importa el middleware express-fileupload para manejar la carga de archivos en las solicitudes
+import fileUpload from "express-fileupload";
+
 // Importa el middleware morgan para registrar las solicitudes HTTP en la consola
 import morgan from "morgan";
 
@@ -17,6 +20,14 @@ app.use(express.json());
 
 // Middleware para parsear datos en formato URL-encoded (por ejemplo, formularios HTML)
 app.use(express.urlencoded({ extended: false }));
+
+// Configura el middleware express-fileupload para manejar archivos temporales
+app.use(
+  fileUpload({
+    tempFileDir: "./upload", // Define el directorio temporal donde se guardarán los archivos
+    useTempFiles: true, // Habilita el uso de archivos temporales
+  })
+);
 
 // Middleware para registrar las solicitudes HTTP en la consola en formato 'dev'
 app.use(morgan("dev"));
