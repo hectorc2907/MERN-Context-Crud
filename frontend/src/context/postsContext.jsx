@@ -1,6 +1,6 @@
 // Importa las funciones necesarias desde React
 import { createContext, useContext, useEffect, useState } from "react";
-// Importamos las peticiones
+// Importamos las peticiones de la API relacionadas con los posts
 import { deletePostRequest, getPostsRequest } from "../api/posts";
 
 // Crea un contexto para gestionar el estado de los posts en la aplicación
@@ -23,7 +23,7 @@ export const usePosts = () => {
 // Componente proveedor del contexto que envuelve a los hijos y provee el estado de posts
 export const PostsProvider = ({ children }) => {
   // Declara el estado 'posts' y la función para actualizarlo
-  const [posts, setPosts] = useState([]);
+  const [posts, setPosts] = useState([]); // Estado para almacenar los posts
   const [error, setError] = useState(null); // Estado para manejar errores
   const [loading, setLoading] = useState(true); // Estado para manejar la carga
 
@@ -42,10 +42,13 @@ export const PostsProvider = ({ children }) => {
 
     fetchPosts(); // Llama a la función para obtener los posts
   }, []); // Dependencias vacías indican que solo se ejecuta al montar el componente
-  
+
+  // Función para eliminar un post por ID
   const deletePost = async (id) => {
-    const response = await deletePostRequest(id);
+    const response = await deletePostRequest(id); // Llama a la función para eliminar el post
     if (response.status === 200) {
+      // Verifica si la respuesta fue exitosa
+      // Actualiza el estado 'posts' excluyendo el post eliminado
       setPosts(posts.filter((post) => post._id !== id));
     }
   };
@@ -55,9 +58,10 @@ export const PostsProvider = ({ children }) => {
   if (error) return <div>Error: {error}</div>; // Muestra el mensaje de error si existe
 
   return (
-    // Provee el estado 'posts' a través del contexto para que los componentes hijos puedan acceder a él
-    <postsContext.Provider value={{posts, deletePost}}>
-      {children}
+    // Provee el estado 'posts' y la función 'deletePost' a través del contexto
+    // para que los componentes hijos puedan acceder a él
+    <postsContext.Provider value={{ posts, deletePost }}>
+      {children} // Renderiza los componentes hijos
     </postsContext.Provider>
   );
 };
